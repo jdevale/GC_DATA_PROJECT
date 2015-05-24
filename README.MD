@@ -24,7 +24,7 @@ Data is summarized by the script: run_analysis.R
 
 There is a single script which performs all the work to including joining data sets, subsetting just the calculated MEAN and STD values, and then calculating group means by SubjectID and Activity.  The basic script flow is as follows:
 
-1. Read Samsung phone data
+1. If necessary download, extract, and read Samsung phone data
 2. Join test and train data sets, combining all XYZ measurements in a single row with subject ID and activity
 3. Subsets the measurement data for only mean and standard deviation of each measure
 4. Creates a tidy data set with only the average of measurements by each subject-activity pair
@@ -32,7 +32,7 @@ There is a single script which performs all the work to including joining data s
 
 Data processing and organization is done primarily using the DPLYR package.  Once the data is read in and converted to dplyr tables they are joined together using bind_col() so that both test and train data sets have all XYZ measurements in a single row which includes the subject and activity.  The train and test data sets are then joined using rbind() into a combined data table.  Variable (column) names are read from the features text file and converted to acceptable name text using make.names(), and are applied to the combine table.  Subject activity in human readable form is added to the combined data table using mutate(), and then the table is reordered so that subjectID and Activity(human readable) are the first two columns, followed by the data observations.  Activity in numerical form is omitted. Data selection is performed using the select() function with the contains() helper function to select columns with "mean" and "std" in their text.  The resulting table is then grouped by SubjectID and Activity, and then summarise_all() is applied to generate means() by the applied grouping.
  
-This script is run within the UCI HAR Dataset directory and assumes the data has been downloaded and unpacked.
+This script will download and unpack the datra files into ./data if necessary, so it can be run from any working directory where the user has write permission, and sufficient space to download and unzip the file.
 
 This resulting data set is TIDY, and conforms to the tidy data requirements of:
 
