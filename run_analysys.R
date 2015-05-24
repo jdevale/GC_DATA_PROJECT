@@ -1,20 +1,33 @@
+library(dplyr)
+library(httr)
+
+## Check if the data directory exists and create if it doesn't
+if(!file.exists("./data")) {
+  dir.create("./data")
+  ## Download and unzip dataset
+  fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+  tempFile <- tempfile()
+  download.file(fileURL, tempFile)
+  unzip(tempFile, exdir = "./data")
+}
+
+
+
 #read in the activity data sets, and produce tidy set containing the means of all MEAN and STD variables
 
-library(dplyr)
-
 #read in data sets from train directory
-trainX_DF <-read.table("train/X_train.txt")
-trainY_DF <-read.table("train/y_train.txt")
-trainSub_DF <-read.table("train/subject_train.txt")
+trainX_DF <-read.table("./data/UCI HAR Dataset/train/X_train.txt")
+trainY_DF <-read.table("./data/UCI HAR Dataset/train/y_train.txt")
+trainSub_DF <-read.table("./data/UCI HAR Dataset/train/subject_train.txt")
 
 #read in data sets from test directory
-testX_DF <- read.table("test/X_test.txt")
-testY_DF <-read.table("test/y_test.txt")
-testSub_DF <-read.table("test/subject_test.txt")
+testX_DF <- read.table("./data/UCI HAR Dataset/test/X_test.txt")
+testY_DF <-read.table("./data/UCI HAR Dataset/test/y_test.txt")
+testSub_DF <-read.table("./data/UCI HAR Dataset/test/subject_test.txt")
 
 #read in feature descriptions and assign to column names
-featureNames <-read.table("features.txt", stringsAsFactors=FALSE)
-activityNames <-read.table("activity_labels.txt", stringsAsFactors=FALSE)
+featureNames <-read.table("./data/UCI HAR Dataset/features.txt", stringsAsFactors=FALSE)
+activityNames <-read.table("./data/UCI HAR Dataset/activity_labels.txt", stringsAsFactors=FALSE)
 featureNames <- make.names(featureNames[,2],unique=T)
 activityNames <-make.names(activityNames[,2],unique=T)
 names(trainX_DF)<-featureNames
@@ -80,6 +93,10 @@ names(columnOrderedSummary)[6] ="angleBetween.timeDomianSignal.MeanOfBodyGyroVec
 names(columnOrderedSummary)[7] ="angleBetween.X.and.Gravity..computerMeanOfSpecificSubject_ActivityPair"
 names(columnOrderedSummary)[8] ="angleBetween.Y.and.Gravity..computerMeanOfSpecificSubject_ActivityPair"
 names(columnOrderedSummary)[9] ="angleBetween.Z.and.Gravity..computerMeanOfSpecificSubject_ActivityPair"
+
+#output data to tidtData csv file
+
+write.table(columnOrderedSummary, "tidydata.txt", row.names = FALSE)
 
 #cleanup the workspace to eliminate extraneous data objects
 rm(leftSplit)
